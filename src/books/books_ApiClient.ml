@@ -1,6 +1,4 @@
 
-module Promise = Js.Promise
-
 module Book = Books_Entities.Book
 
 module Option = struct
@@ -49,9 +47,10 @@ let fetch_book id =
   )
 
 let create_book title author =
-  let payload = Js.Dict.empty () in
-  Js.Dict.set payload "title" @@ Js.Json.string title;
-  Js.Dict.set payload "author" @@ Js.Json.string author;
+  let payload = Js.Dict.fromList [
+    "title", Js.Json.string title;
+    "author", Js.Json.string author
+  ] in
   Fetch.fetchWithInit "/api/books" @@
     Fetch.RequestInit.make
       ~method_:Post
@@ -61,9 +60,10 @@ let create_book title author =
 
 let update_book id title author =
   let id = Book.id_to_string id in
-  let payload = Js.Dict.empty () in
-  Js.Dict.set payload "title" @@ Js.Json.string title;
-  Js.Dict.set payload "author" @@ Js.Json.string author;
+  let payload = Js.Dict.fromList [
+    "title", Js.Json.string title;
+    "author", Js.Json.string author
+  ] in
   Fetch.fetchWithInit {j|/api/books/$(id)|j} @@
     Fetch.RequestInit.make
       ~method_:Put
