@@ -42,8 +42,12 @@ module App = {
 [%%bs.raw {|
   if ('serviceWorker' in navigator) {
     async function testSW() {
-      const reg = await navigator.serviceWorker.register('/sw.js', {scope: '/books'});
-      console.log('Ok. ServiceWorker was registered.', reg);
+      try {
+        const reg = await navigator.serviceWorker.register('/sw.js', { scope: "" });
+        console.log('Ok. ServiceWorker was registered.', reg);
+      } catch (e) {
+        console.error("Registration failed.", e);
+      }
     }
     testSW();
   }
