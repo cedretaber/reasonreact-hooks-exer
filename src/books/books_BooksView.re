@@ -56,7 +56,7 @@ module BookTable = {
 [@react.component]
 let make = (~books, ~actionCreator) => {
   React.useEffect0(_ => {
-    actionCreator#fetch_books();
+    actionCreator#fetch_books;
     None
   });
   <>

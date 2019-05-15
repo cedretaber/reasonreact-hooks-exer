@@ -22,5 +22,7 @@ module Promise = struct
     end
   end
 
-  let ignore promise = then_ (fun _ -> resolve ()) promise
+  let iter f promise = map f promise |> ignore
+
+  let ignore promise = map ignore promise
 end

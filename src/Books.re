@@ -12,15 +12,13 @@ let initialState = Books.{
   books: []
 };
 
-module ActionCreator = Books.ActionCreator(ApiClient.Default);
-
 [@react.component]
 let make = () => {
   let ({Books.books}, dispatch) = React.useReducer(
     Books.reducer,
     initialState
   );
-  let actionCreator = ActionCreator.make(dispatch);
+  let actionCreator = Books.ActionCreator.make((module ApiClient.Default), dispatch);
   let url = ReasonReactRouter.useUrl();
   switch (url.path) {
   | ["books", "new"] =>
