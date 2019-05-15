@@ -1,19 +1,8 @@
+[@@@warning "-6"]
 
 module Book = Books_Entities.Book
 
-module Option = struct
-  let flat_map f = function
-      None -> None
-    | Some a -> f a
-
-  let map f = flat_map @@ fun x -> Some (f x)
-end
-
-module Promise = struct
-  include Js.Promise
-
-  let ignore promise = then_ (fun _ -> resolve ()) promise
-end
+open Util
 
 module type Interface = sig
   val fetch_books : unit -> Book.t list Promise.t
@@ -26,39 +15,40 @@ end
 module Default : Interface = struct
   let fetch_books () =
     let open Promise in
-    Fetch.fetch "/api/books"
-    |> then_ Fetch.Response.json
-    |> then_ (fun json -> Js.Json.decodeArray json |> resolve)
-    |> then_ (fun opt ->
-      Belt.Option.getWithDefault opt [||]
+    let%bind res = Fetch.fetch "/api/books" in
+    let%bind json = Fetch.Response.json res in
+    return (
+      json
+      |> Js.Json.decodeArray
+      |> Option.get_or_else [||]
       |> Array.to_list
       |> List.map (fun json ->
-        match Js.Json.decodeObject json with
-            None -> []
-          | Some obj ->
-          match (
-            (Js.Dict.get obj "id" |> Option.flat_map @@ fun id -> Option.map int_of_float @@ Js.Json.decodeNumber id),
-            (Js.Dict.get obj "title" |> Option.flat_map Js.Json.decodeString),
-            (Js.Dict.get obj "author" |> Option.flat_map Js.Json.decodeString)
-          ) with
-              (Some id, Some title, Some author) -> [Book.{ id; title; author }]
-            | _ -> []
+        match (
+          let open! Option in
+          let%bind obj = Js.Json.decodeObject json in
+          let%bind id = Js.Dict.get obj "id" |> bind (fun id -> map int_of_float @@ Js.Json.decodeNumber id)
+          and title = Js.Dict.get obj "title" |> bind Js.Json.decodeString
+          and author = Js.Dict.get obj "author" |> bind Js.Json.decodeString in
+          return Book.{ id; title; author }
+        ) with
+            Some book -> [book]
+          | None -> []
       )
       |> List.concat
-      |> resolve
     )
 
   let fetch_book id =
     let id = Book.id_to_string id in
     let open Promise in
-    Fetch.fetch {j|/api/books/$(id)|j}
-    |> then_ Fetch.Response.json
-    |> then_ (fun json ->
-      let dict = Belt.Option.getExn @@ Js.Json.decodeObject json in
-      let id = Belt.Option.getExn (Js.Dict.get dict "id" |> Option.flat_map (fun id -> Js.Json.decodeNumber id |> Option.map int_of_float)) in
-      let title = Belt.Option.getExn (Js.Dict.get dict "title" |> Option.flat_map Js.Json.decodeString) in
-      let author = Belt.Option.getExn (Js.Dict.get dict "author" |> Option.flat_map Js.Json.decodeString) in
-      resolve Book.{id; title; author}
+    let%bind res = Fetch.fetch {j|/api/books/$(id)|j} in
+    let%bind json = Fetch.Response.json res in
+    return @@ Belt.Option.getExn (
+      let open! Option in
+      let%bind dict = Js.Json.decodeObject json in
+      let%bind id = Js.Dict.get dict "id" |> Option.bind (fun id -> Js.Json.decodeNumber id |> Option.map int_of_float)
+      and title = Js.Dict.get dict "title" |> Option.bind Js.Json.decodeString
+      and author = Js.Dict.get dict "author" |> Option.bind Js.Json.decodeString in
+      return Book.{id; title; author}
     )
 
   let create_book title author =
