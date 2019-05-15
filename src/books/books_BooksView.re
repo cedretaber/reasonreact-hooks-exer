@@ -33,7 +33,7 @@ module BookTable = {
     let books =
       books
       |> List.mapi(
-        (idx, book) => <BookRow key={{j|bookList__bookRow-$(idx)|j}} book={book} actionCreator={actionCreator} />
+        (idx, book) => <BookRow key={{j|bookList__bookRow-$(idx)|j}} book actionCreator />
       )
       |> Array.of_list;
     <table className="table">
@@ -61,7 +61,7 @@ let make = (~books, ~actionCreator) => {
   });
   <>
     <Link href="/books/new">{s("new")}</Link>
-    <BookTable books={books} actionCreator={actionCreator} />
+    <BookTable books actionCreator />
     <Link href="/">{s("Back")}</Link>
   </>
 }
