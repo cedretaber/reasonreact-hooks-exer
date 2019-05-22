@@ -5,6 +5,7 @@ module List = {
       <li><Link href={"/guestbook"} >{React.string("Guest Book")}</Link></li>
       <li><Link href={"/books"}>{React.string("Book List")}</Link></li>
       <li><Link href={"/modal"}>{React.string("Modal")}</Link></li>
+      <li><Link href={"/counter"}>{React.string("Counter")}</Link></li>
     </ul>
   }
 }
@@ -17,6 +18,7 @@ module App = {
     | ["guestbook"] => <GuestBook />
     | ["books", ..._] => <Books />
     | ["modal", ..._] => <Modal />
+    | ["counter", ..._] => <Counter />
     | _ => <List />
     };
     <>
