@@ -13,14 +13,14 @@ jobs:
       - run: opam install ppx_let -y
       - run: yarn install
       - run:
-        command: |
-          mkdir ppx_let
-          cd ppx_let
-          yarn init -y
-          ln -s `opam config var ppx_let:lib`/ppx ppx
-          yarn link
-          cd ..
-          yarn link ppx_let
+          command: |
+            mkdir ppx_let
+            cd ppx_let
+            yarn init -y
+            ln -s `opam config var ppx_let:lib`/ppx ppx
+            yarn link
+            cd ..
+            yarn link ppx_let
       - save_cache:
           key: yarn-cache-{{ checksum "package.json" }}
           paths:
