@@ -1,4 +1,8 @@
-module Books = Books_Books;
+module State = Books_State;
+
+module BooksStore = Books_Store;
+
+module ActionCreator = Books_ActionCreator;
 
 module Book = Books_Entities.Book;
 
@@ -8,24 +12,20 @@ module BooksView = Books_BooksView;
 
 module BookView = Books_BookView;
 
-let initialState = Books.{
-  books: []
-};
-
 [@react.component]
 let make = () => {
-  let ({Books.books}, dispatch) = React.useReducer(
-    Books.reducer,
-    initialState
-  );
-  let actionCreator = Books.ActionCreator.make((module ApiClient.Default), dispatch);
+  let actionCreator = ActionCreator.make(module ApiClient.Default);
   let url = ReasonReactRouter.useUrl();
-  switch (url.path) {
-  | ["books", "new"] =>
-    <BookView actionCreator={actionCreator} />
-  | ["books", id] =>
-    <BookView id={Book.id_of_string(id)} actionCreator={actionCreator} />
-  | _ =>
-    <BooksView books={books} actionCreator={actionCreator} />
-  };
+  <BooksStore actionCreator>
+  {
+    switch (url.path) {
+      | ["books", "new"] =>
+        <BookView />
+      | ["books", id] =>
+        <BookView id=id->Book.id_of_string />
+      | _ =>
+        <BooksView />
+      };
+  }
+  </BooksStore>
 }

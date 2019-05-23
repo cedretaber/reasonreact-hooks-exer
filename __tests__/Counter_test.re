@@ -76,7 +76,7 @@ describe("Button", () => {
     button->FireEvent.click;
 
     c^ |> expect |> toBe(0);
-  })
+  });
 });
 
 describe("Counter(Outer)", () => {

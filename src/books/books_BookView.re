@@ -1,7 +1,9 @@
 
 let s = React.string;
 
-module Books = Books_Books;
+module Action = Books_Action;
+module State = Books_State;
+module BooksStore = Books_Store;
 
 module Input = {
   [@react.component]
@@ -13,60 +15,57 @@ module Input = {
 module Button = {
   [@react.component]
   let make = (~value, ~onClick) => {
-    <button className="button" onClick >(s(value))</button>
+    <button className="button" onClick >value->s</button>
   }
 };
 
 [@react.component]
-let make = (~id=?, ~actionCreator) => {
-  let (title, setTitle) = React.useState(_ => "");
-  let (author, setAuthor) = React.useState(_ => "");
+let make = (~id=?) => {
+  let ({State.title, author}, action) = BooksStore.useStateAndAction();
   React.useEffect0(() => {
     switch (id) {
-    | None => ()
+    | None =>
+      action(Action.ClearForm)
     | Some(id) =>
-      actionCreator#fetch_book(id, (title, author) => {
-        setTitle(_ => title);
-        setAuthor(_ => author);
-      })
+      action(Action.FetchBook(id))
     };
     None
-  })
-  let changeTitle = event => {
+  });
+  let changeTitle = React.useCallback0(event => {
     let title = event->ReactEvent.Form.target##value;
-    setTitle(_ => title);
-  };
-  let changeAuthor = event => {
+    action(Action.ChangeTitle(title));
+  });
+  let changeAuthor = React.useCallback0(event => {
     let author = event->ReactEvent.Form.target##value;
-    setAuthor(_ => author);
-  };
-  let submit = event => {
+    action(Action.ChangeAuthor(author));
+  });
+  let submit = React.useCallback2(event => {
     event->ReactEvent.Mouse.preventDefault;
     switch (id) {
-    | None => actionCreator#create_book(title, author)
-    | Some(id) => actionCreator#update_book(id, title, author)
+    | None => action(Action.CreateBook (title, author))
+    | Some(id) => action(Action.UpdateBook(id, title, author))
     }
-  };
+  }, (title, author));
   <>
     <form>
       <div className="field">
-        <label className="label">{s("Title")}</label>
+        <label className="label">"Title"->s</label>
         <div className="control">
-          <Input value={title} onChange={changeTitle} />
+          <Input value=title onChange=changeTitle />
         </div>
       </div>
       <div className="field">
-        <label className="label">{s("Author")}</label>
+        <label className="label">"Author"->s</label>
         <div className="control">
-          <Input value={author} onChange={changeAuthor} />
+          <Input value=author onChange=changeAuthor />
         </div>
       </div>
       <div className="field">
         <div className="control">
-          <Button value={Belt.Option.isSome(id) ? "Update" : "Create"} onClick={submit} />
+          <Button value={Belt.Option.isSome(id) ? "Update" : "Create"} onClick=submit />
         </div>
       </div>
     </form>
-    <Link href="/books">{s("Back")}</Link>
+    <Link href="/books">"Back"->s</Link>
   </>
 }
