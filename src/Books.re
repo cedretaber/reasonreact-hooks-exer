@@ -1,15 +1,9 @@
 module State = Books_State;
-
 module BooksStore = Books_Store;
-
 module ActionCreator = Books_ActionCreator;
-
 module Book = Books_Entities.Book;
-
 module ApiClient = Books_ApiClient
-
 module BooksView = Books_BooksView;
-
 module BookView = Books_BookView;
 
 [@react.component]

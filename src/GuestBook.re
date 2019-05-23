@@ -26,14 +26,14 @@ module PostForm = {
   module Input = {
     [@react.component]
     let make = (~value, ~placeholder, ~onChange) => {
-      <input className="input" type_="text" value={value} placeholder={placeholder} onChange={onChange} />
+      <input className="input" type_="text" value placeholder onChange />
     }
   };
 
   module Button = {
     [@react.component]
     let make = (~value, ~onClick) => {
-      <button className="button" onClick={onClick} >(s(value))</button>
+      <button className="button" onClick >value->s</button>
     }
   };
 
@@ -52,22 +52,22 @@ module PostForm = {
     <form>
       <div className="field">
         <div className="control">
-          <Input value={nameValue} placeholder={{j|お名前|j}} onChange={onNameChange} />
+          <Input value=nameValue placeholder={j|お名前|j} onChange=onNameChange />
         </div>
       </div>
       <div className="field">
         <div className="control">
-          <Input value={textValue} placeholder={{j|一言|j}} onChange={onTextChange} />
+          <Input value=textValue placeholder={j|一言|j} onChange=onTextChange />
         </div>
       </div>
       <div className="field">
         <div className="control">
-          <Button value={{j|投稿|j}} onClick={postPost} />
+          <Button value={j|投稿|j} onClick=postPost />
         </div>
       </div>
     </form>
   }
-}
+};
 
 [@bs.send]
 external toLocaleString : Js.Date.t => string => string = "";
@@ -81,19 +81,19 @@ module PostList = {
       }>
         <header className="card-header">
           <p className="card-header-title">
-            {s(name)}
+            name->s
           </p>
         </header>
         <div className="card-content">
           <div className="content">
-            {s(text)}
+            text->s
             <br />
           </div>
         </div>
         <footer className="card-footer">
           <div className="card-footer-item has-text-grey-light">
             <time>
-            {time->toLocaleString("ja-JP")->s}
+              {time->toLocaleString("ja-JP")->s}
             </time>
           </div>
         </footer>
@@ -110,7 +110,7 @@ module PostList = {
       })
       |> Array.of_list;
     <div>
-      {React.array(postList)}
+      postList->React.array
     </div>
   }
 };
@@ -142,11 +142,11 @@ let make = () => {
     <div className="level">
       <div className="level-left">
         <div className="level-item">
-          <PostForm nameValue={name} textValue={text} dispatch />
+          <PostForm nameValue=name textValue=text dispatch />
         </div>
       </div>
     </div>
     <PostList postList />
-    <Link href="/">{React.string("Back")}</Link>
+    <Link href="/">"Back"->React.string</Link>
   </div>
 }

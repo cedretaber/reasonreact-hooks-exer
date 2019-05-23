@@ -2,10 +2,10 @@ module List = {
   [@react.component]
   let make = () => {
     <ul>
-      <li><Link href={"/guestbook"} >{React.string("Guest Book")}</Link></li>
-      <li><Link href={"/books"}>{React.string("Book List")}</Link></li>
-      <li><Link href={"/modal"}>{React.string("Modal")}</Link></li>
-      <li><Link href={"/counter"}>{React.string("Counter")}</Link></li>
+      <li><Link href="/guestbook" >"Guest Book"->React.string</Link></li>
+      <li><Link href="/books">"Book List"->React.string</Link></li>
+      <li><Link href="/modal">"Modal"->React.string</Link></li>
+      <li><Link href="/counter">"Counter"->React.string</Link></li>
     </ul>
   }
 }
@@ -28,14 +28,14 @@ module App = {
         <div className="level-left">
           <div className="level-item">
             <h1 className="title">
-              {React.string("ReasonReact + React Hooks")}
+              "ReasonReact + React Hooks"->React.string
             </h1>
           </div>
         </div>
       </header>
       <hr />
       <div className="container">
-        {content}
+        content
       </div>
     </>
   }

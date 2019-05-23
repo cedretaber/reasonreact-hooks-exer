@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: cedretaber/bucklescript-ci
+    working_directory: ~/app
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - yarn-cache-{{ checksum "package.json" }}
+            - yarn-cache-
+      - run: opam install ppx_let -y
+      - run: yarn install
+      - run:
+        command: |
+          mkdir ppx_let
+          cd ppx_let
+          yarn init -y
+          ln -s `opam config var ppx_let:lib`/ppx ppx
+          yarn link
+          cd ..
+          yarn link ppx_let
+      - save_cache:
+          key: yarn-cache-{{ checksum "package.json" }}
+          paths:
+            - /home/circleci/.cache
+            - /home/circleci/.opam
+            - node_modules
+      - run: yarn test
