@@ -11,7 +11,7 @@ jobs:
             - yarn-cache-{{ checksum "package.json" }}
             - yarn-cache-
       - run: opam install ppx_let -y
-      - run: yarn install
+      - run: for i in {1..4}; do yarn install && break; done && yarn install
       - run:
           command: |
             mkdir ppx_let
