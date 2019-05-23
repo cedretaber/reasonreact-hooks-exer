@@ -1,5 +1,7 @@
 # Hooks Exercise
 
+[![CircleCI](https://circleci.com/gh/cedretaber/reasonreact-hooks-exer.svg?style=svg)](https://circleci.com/gh/cedretaber/reasonreact-hooks-exer)
+
 ## Set up ppx_let for BuckleScript
 
 You should have installed OCaml 4.02.3 and ppx_let.
@@ -23,4 +25,24 @@ $ yarn link
 $ cd ..
 
 $ yarn link ppx_let
+```
+
+## Build and Watch
+
+```
+$ yarn build
+
+$ yarn webpack
+```
+
+## Server start
+
+```
+$ yarn server
+```
+
+## Test
+
+```
+$ yarn test
 ```
